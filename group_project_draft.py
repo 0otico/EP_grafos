@@ -8,9 +8,11 @@ def sim(Tritmo, Tlimiar, Tfiltro, Tfinal, Tgrafo): #as tres variaveis de tempo, 
     p = new()
     c = cap.new()
 
+
+    #esta funcao preenche a populacao com T individuos, i poderia estar num modulo, o gen é identificador
     for x in range(T):
-        p = popu.addI(p,ind.new(col.new(Tgrafo,w),ct,n))
-        n += 1
+        p = popu.addI(p,ind.new(col.new(Tgrafo,w),ct,gen))
+        gen += 1
 
     for x in p: #inicializa os eventos de avaliação para toda a população
         c = cap.add(event.event(avaliação,ind.ident(x),ct + random(Tlimiar)),c)
@@ -32,14 +34,14 @@ def sim(Tritmo, Tlimiar, Tfiltro, Tfinal, Tgrafo): #as tres variaveis de tempo, 
 
 
     while Tfinal >= cT:
+        e = event.next(c)
+        if event.kind(e) == avaliação: #se o proximo evento for avaliacao
+            A = ind.coef(popu.ident(p,event.ident(e))) #coeficiente de avaliação do grafo do evento
 
-        if event.evento(event.next(listaeventos)) == avaliação:
-
-            A = grafo.avaliação(event.object(evento)) #coeficiente de avaliação do grafo do evento
-            I = grafo.idade(event.object(evento), cT) #coeficiente de avaliação do grafo do evento
+            I = ct - ind.idade(popu.ident(p,event.ident(e)) #idade do grafo do evento
 
 
-            if random() <= (1-(2/pi)(1+A)**(1+8(1+I)))
+            if random() <= (1-(2/pi)(1+A)**(1+8(1+I))) #ainda não sei usar random functions
 
 
 
@@ -48,7 +50,7 @@ def sim(Tritmo, Tlimiar, Tfiltro, Tfinal, Tgrafo): #as tres variaveis de tempo, 
 
 
 
-        elif event.evento(event.next(listaeventos)) == evolução:
+        elif event.kind(event.next(c)) == evolução:
 
 
             if random() <= (1/(1+e**((K-T)/10)): #mutação

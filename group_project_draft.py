@@ -2,8 +2,33 @@ def sim(Tritmo, Tlimiar, Tfiltro, Tfinal, Tgrafo): #as tres variaveis de tempo, 
     ct = 0
     A = #Coeficiente de adaptação
     I = #criar uma data de nascensa para cada grafo, e suptrai-la ao ct
+    gen = 0
     T = 100 # populacao atual 
     K = T #populacao inicial
+    p = new()
+    c = cap.new()
+
+    for x in range(T):
+        p = popu.addI(p,ind.new(col.new(Tgrafo,w),ct,n))
+        n += 1
+
+    for x in p: #inicializa os eventos de avaliação para toda a população
+        c = cap.add(event.event(avaliação,ind.ident(x),ct + random(Tlimiar)),c)
+
+
+
+    for x in p: #inicializa os eventos de evolução para toda a população
+        c = cap.add(event.event(evolução,ind.ident(x),ct + random(Tritmo)),c)
+
+
+
+    #inicializa o evento de filtragem para toda a população
+    c = cap.add(event.event(seleção, p ,ct + random(Tfiltro)),c) 
+
+
+
+    
+
 
 
     while Tfinal >= cT:

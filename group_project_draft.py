@@ -1,9 +1,9 @@
-def sim(Tritmo, Tlimiar, Tfiltro, Tfinal):
+def sim(Tritmo, Tlimiar, Tfiltro, Tfinal, Tgrafo): #as tres variaveis de tempo, o tempo final, e o grafo a ser utilisado
     ct = 0
-    A = Coeficiente de adaptação
+    A = #Coeficiente de adaptação
     I = #criar uma data de nascensa para cada grafo, e suptrai-la ao ct
-    T = 100
-    K = T
+    T = 100 # populacao atual 
+    K = T #populacao inicial
 
 
     while Tfinal >= cT:

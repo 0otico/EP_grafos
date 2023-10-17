@@ -1,47 +1,20 @@
-def sim(Tritmo, Tlimiar, Tfiltro, Tfinal, Tgrafo): #as tres variaveis de tempo, o tempo final, e o grafo a ser utilisado
+def sim(Tritmo, Tlimiar, Tfiltro, Tfinal):
     ct = 0
-    A = #Coeficiente de adaptação
+    A = Coeficiente de adaptação
     I = #criar uma data de nascensa para cada grafo, e suptrai-la ao ct
-    gen = 0
-    T = 100 # populacao atual 
-    K = T #populacao inicial
-    p = new()
-    c = cap.new()
-
-
-    #esta funcao preenche a populacao com T individuos, i poderia estar num modulo, o gen é identificador
-    for x in range(T):
-        p = popu.addI(p,ind.new(col.new(Tgrafo,w),ct,gen))
-        gen += 1
-
-    for x in p: #inicializa os eventos de avaliação para toda a população
-        c = cap.add(event.event(avaliação,ind.ident(x),ct + random(Tlimiar)),c)
-
-
-
-    for x in p: #inicializa os eventos de evolução para toda a população
-        c = cap.add(event.event(evolução,ind.ident(x),ct + random(Tritmo)),c)
-
-
-
-    #inicializa o evento de filtragem para toda a população
-    c = cap.add(event.event(seleção, p ,ct + random(Tfiltro)),c) 
-
-
-
-    
-
+    T = 100
+    K = T
 
 
     while Tfinal >= cT:
-        e = event.next(c)
-        if event.kind(e) == avaliação: #se o proximo evento for avaliacao
-            A = ind.coef(popu.ident(p,event.ident(e))) #coeficiente de avaliação do grafo do evento
 
-            I = ct - ind.idade(popu.ident(p,event.ident(e)) #idade do grafo do evento
+        if event.evento(event.next(listaeventos)) == avaliação:
+
+            A = grafo.avaliação(event.object(evento)) #coeficiente de avaliação do grafo do evento
+            I = grafo.idade(event.object(evento), cT) #coeficiente de avaliação do grafo do evento
 
 
-            if random() <= (1-(2/pi)(1+A)**(1+8(1+I))) #ainda não sei usar random functions
+            if random() <= (1-(2/pi)(1+A)**(1+8(1+I)))
 
 
 
@@ -50,7 +23,7 @@ def sim(Tritmo, Tlimiar, Tfiltro, Tfinal, Tgrafo): #as tres variaveis de tempo, 
 
 
 
-        elif event.kind(event.next(c)) == evolução:
+        elif event.evento(event.next(listaeventos)) == evolução:
 
 
             if random() <= (1/(1+e**((K-T)/10)): #mutação

@@ -1,40 +1,59 @@
 #População - Lista p de indivíduos
-import individuos as ind
+
+import grafos as graph
+import colorações as color
+import indivíduos as ind
+import random as random
 
 #new() - cria uma população nova (devolve a população criada)
 def new():
-  return []
+    return []
 
 #emptyQ(p) - devolve True se a população p não tiver indivíduos; devolve False caso contrário
 def emptyQ(p):
-  if p=[]
-    return True
-  else:
-    return False 
-
+    return len(p)==0
+    
 #ident(p,i) - devolve o indivíduo da população p com o identificador i
 def ident(p,i):
-  return ind.ident(i) 
+    k=0
+    found=False
+    while k<len(p) and not found:
+        if ind.ident(p[k])==i:
+            found=True
+        else:
+            k+=1
+    if found: #só devolve um valor se o indivíduo existir
+        return p[k]
 
 #best(p) - devolve o indivíduo de p com melhor coeficiente de adaptação
 def best(p):
-
+    best=ind.coef(p[0]) 
+    res=p[0]
+    for x in p[1:]:
+        if ind.coef(x)>best:
+            best=ind.coef(x)
+            res=x
+    return res
 
 #worst(p) - devolve o indivíduo de p com pior coeficiente de adaptação 
 def worst(p):
-  def listadecoefs(p,i)
-  return ind.coef(i)
-    def minimo(ind.coef(i)): #função que calcula o minimo de uma lista
-         res=ind.coef(i)[0]
-        for x in ind.coef(i):
-            if x<res:
-                res=x
-        return res
-return minimo
-
+    worst=ind.coef(p[0])
+    res=p[0]
+    for x in p[1:]:
+        if ind.coef(x)<worst:
+            worst=ind.coef(x)
+            res=x
+    return res
 
 #addI(p,i) - adiciona o indivíduo i à população p e devolve p
-def addI(p,i)
-
+def addI(p,i):
+    p+=[i]
+    return p
 
 #kill(p,i) - tira o indivíduo i da lista p e devolve-a 
+def kill(p,i):
+    res=[]
+    for x in p:
+        if ind.ident(x)!=ind.ident(i):
+            res+=[x]
+    return res

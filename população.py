@@ -18,9 +18,7 @@ def ident(p,i):
 
 #best(p) - devolve o indivíduo de p com melhor coeficiente de adaptação
 def best(p):
-def auxmax(p):
-  ind.coef(i):
-return auxmax(p) 
+
 
 #worst(p) - devolve o indivíduo de p com pior coeficiente de adaptação 
 def worst(p):

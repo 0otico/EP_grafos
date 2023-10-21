@@ -10,7 +10,7 @@ def new(c,t,n):
 #coef(i) - devolve o coeficiente de adaptação de i
 def coef(i):
   if color.num_erros(i[0])==0:
-    return graph.dim (color.grafo(i[0]))/ color.num_cores(i[0])
+    return graph.dim(color.grafo(i[0]))/color.num_cores(i[0])
   else:
     return 1/(color.num_erros(i[0])+1)
 

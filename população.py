@@ -9,9 +9,9 @@ import random as random
 def new():
     return []
 
-#emptyQ(p) - devolve True se a população p não tiver indivíduos; devolve False caso contrário
-def emptyQ(p):
-    return len(p)==0
+#dim(p) - devolve a dimensão da população (número de elementos)
+def dim(p):
+    return len(p)
     
 #ident(p,i) - devolve o indivíduo da população p com o identificador i
 def ident(p,i):

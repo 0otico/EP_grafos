@@ -32,5 +32,5 @@ def ident(i):
 
 
 #color(i) - devolve a coloração do indivíduo
-def color(i):
+def colour(i):
     return i[0]

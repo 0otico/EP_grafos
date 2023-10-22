@@ -11,9 +11,10 @@ import random as random #extensão com random, randrange
 from math import pi 
 from math import log 
 from math import e
+from math import atan
 
 def exprandom(m):
-    x=random()
+    x=random.random()
     return -m*log(x)
 
 
@@ -32,37 +33,38 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
         return 'Erro: a variável Tritmo tem de ser um número positivo'
     if (type(Tlimiar)!=float and type(Tlimiar)!=int) or Tlimiar<=0:
         return 'Erro: a variável Tlimiar tem de ser um número positivo'
-    if (type(Tfiltro)!=float and type(Tfiltro)!=int) or Tflitro<=0:
+    if (type(Tfiltro)!=float and type(Tfiltro)!=int) or Tfiltro<=0:
         return 'Erro: a variável Tfiltro tem de ser um número positivo'
 
     #inicalizar as variáveis
     CurrentTime = 0 #o instante em que estamos
     identificador = 1 #identificador do próximo indivíduo a ser criado
     população = pop.new() #cria a lista de individuos
-    cap = cap.new() #cria a lista de eventos
+    CAP = cap.new() #cria a lista de eventos
 
     #inicializar a população e a CAP
     cores = [x+1 for x in range(graph.dim(G))] #coloração da população inicial
+    coloracao = color.new(G, cores)
     for k in range(K):
-        indivíduo = ind.new(cores, CurrentTime, identificador) #cria o indivíduo novo 
+        indivíduo = ind.new(coloracao, CurrentTime, identificador) #cria o indivíduo novo 
         população = pop.addI(população, indivíduo) #junta o indivíduo novo à população
         avaliação = event.event("avaliação", identificador, CurrentTime + exprandom(Tlimiar)) #próxima avaliação do novo indivíduo
-        cap = cap.add(avaliação, cap) #adiciona a avaliação à CAP
+        CAP = cap.add(avaliação, CAP) #adiciona a avaliação à CAP
         evolução = event.event("evolução", identificador, CurrentTime + exprandom(Tritmo)) #próxima evolução do novo indivíduo
-        cap = cap.add(evolução, cap) #adiciona a evolução à CAP
+        CAP = cap.add(evolução, CAP) #adiciona a evolução à CAP
         identificador += 1
         
     #próximo evento de seleção global
     seleção = event.event("seleção", 0, CurrentTime+exprandom(Tfiltro)) #0 serve como default, porque a seleção afeta todos
-    cap = cap.add(seleção, cap)
+    CAP = cap.add(seleção, CAP)
     
     
-    while CurrentTime <= Tfinal and pop.dim(população)!=0: 
+    while CurrentTime <= Tfim and pop.dim(população)!=0: 
         #simulação para quando não houver mais indivíduos ou chegar ao fim do tempo
         
         #inicializar o próximo evento
-        EventoAtual = pop.nextE(cap) #evento atual é o próximo da CAP
-        cap = pop.delete(cap) #elimina o evento atual da CAP
+        EventoAtual = cap.nextE(CAP) #evento atual é o próximo da CAP
+        CAP = cap.delete(CAP) #elimina o evento atual da CAP
         CurrentTime = event.time(EventoAtual)
         
         
@@ -72,13 +74,13 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
             A = ind.coef(avaliado) #calcula o coeficiente de adaptação do avaliado
             I = CurrentTime - ind.idade(avaliado) #calcula a idade do avaliado
 
-            if random() < (1-(2/pi)*arctan((1+A)**(1+8/(1+I)))): #probabilidade do avaliado morrer
+            if random.random() < (1-(2/pi)*atan((1+A)**(1+8/(1+I)))): #probabilidade do avaliado morrer
                 população = pop.kill(população, avaliado) #retira o avaliado da população
-                cap = cap.delete_id(cap, avaliado) #elimia todos os eventos respeitantes ao avaliado
+                CAP = cap.delete_id(CAP, avaliado) #elimia todos os eventos respeitantes ao avaliado
 
             else: #se não morrer, marca-se a próxima avaliação
                 avaliação = event.event("avaliação", avaliado, CurrentTime + exprandom(Tlimiar))
-                cap = cap.add(avaliação, cap)
+                CAP = cap.add(avaliação, CAP)
 
                 
         elif event.kind(EventoAtual) == "evolução": #se o próximo evento for uma evolução
@@ -86,7 +88,7 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
             avaliado = pop.ident(população, event.ident(EventoAtual)) #individuo a ser avaliado
             T = pop.dim(população) #calcula a dimensão da população atual
 
-            if random() < 1/(1+e**((K-T)/10)): #probabilidade de haver uma mutação
+            if random.random() < 1/(1+e**((K-T)/10)): #probabilidade de haver uma mutação
                 novo = ind.mutation(avaliado) #cria um indivíduo novo, que é a mutação do indivíduo avaliado
                 if ind.coef(novo) > ind.coef(avaliado): #substitui o avaliado pelo novo, se o novo for melhor
                     população = pop.kill(população, avaliado) #elimina o avaliado
@@ -94,31 +96,31 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
                     #não é preciso atualizar eventos, porque o novo tem o mesmo identificador (na prática, é o mesmo indivíduo)
 
             else: #se não houver uma mutação, há uma reprodução
-                filho = ind.new(ind.color(avaliado), CurrentTime, identificador) #cria o filho, com a mesma coloração
+                filho = ind.new(ind.colour(avaliado), CurrentTime, identificador) #cria o filho, com a mesma coloração
                 filho = ind.mutation(filho) #provoca uma mutação no filho
                 população = pop.addI(população, filho) #adiciona o filho à população
                 avaliação = event.event("avaliação", identificador, CurrentTime + exprandom(Tlimiar)) #próxima avaliação do filho
-                cap = cap.add(avaliação, cap)
+                CAP = cap.add(avaliação, CAP)
                 evolução = event.event("evolução", identificador, CurrentTime + exprandom(Tritmo)) #próxima evolução do filho
-                cap = cap.add(evolução, cap)
+                CAP = cap.add(evolução, CAP)
                 identificador += 1
 
             evolução = event.event("evolução", ind.ident(avaliado), CurrentTime + exprandom(Tritmo)) #próxima evolução do avaliado
-            cap = cap.add(evolução, cap)
+            CAP = cap.add(evolução, CAP)
             
             
         else: #se o próximo evento for uma seleção
             
             while ind.coef(pop.worst(população)) < 1: #elimina os indivíduos inválidos (com coeficientes <1)
                 população = pop.kill(pop.worst(população)) #elimina o pior indivíduo
-                cap = cap.delete_id(cap, popu.worst(população)) #elimina os eventos do indivíduo eliminado
+                CAP = cap.delete_id(CAP, pop.worst(população)) #elimina os eventos do indivíduo eliminado
                
             while pop.dim(população) > K*(3/2): #elimina os piores válidos, de forma a controlar o tamanho da população
                 população = pop.kill(pop.worst(população)) #elimina o pior indivíduo
-                cap = cap.delete_id(cap, popu.worst(população)) #elimina os eventos do indivíduo eliminado
+                CAP = cap.delete_id(CAP, pop.worst(população)) #elimina os eventos do indivíduo eliminado
 
             seleção = event.event("seleção", 0, CurrentTime + exprandom(Tfiltro)) #próximo evento de seleção
-            cap = cap.add(seleção, cap)
+            CAP = cap.add(seleção, CAP)
     #fim do ciclo
 
 
@@ -127,5 +129,5 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
     
     else:
         vencedor = pop.best(população) #vê qual o melhor sobrevivente
-        coloração = ind.color(vencedor) #vê a coloração do melhor
+        coloração = ind.colour(vencedor) #vê a coloração do melhor
         return color.show(coloração) #mostra a  melhor coloração

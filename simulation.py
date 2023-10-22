@@ -82,7 +82,7 @@ def sim(Tritmo, Tlimiar, Tfiltro, Tfinal, Tgrafo, Tcolor): #as tres variaveis de
         
             idx1 = popu.ident(p, event.ident(e)) #individuo a ser avaliado
 
-            if random() <= 1/(1+(e**((K-T)/10))): #mutacao
+            if random() <= 1/(1+(math.e**((K-T)/10))): #mutacao
                 idx2 = ind.mutation(idx1) #individuo a ser avaliado mutado
                 if ind.coef(idx2) > ind.coef(idx1): #substitui o antigo pelo novo com cor diferente (mutado), se for melhor
                     popu.kill(idx1) #kill the old

@@ -29,3 +29,8 @@ def mutation(i):
 #ident(i) - devolve o identificador do indivíduo 
 def ident(i):
     return i[2]
+
+
+#color(i) - devolve a coloração do indivíduo
+def color(i):
+    return i[0]

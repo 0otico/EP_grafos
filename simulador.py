@@ -66,61 +66,64 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
         EventoAtual = cap.nextE(CAP) #evento atual é o próximo da CAP
         CAP = cap.delete(CAP) #elimina o evento atual da CAP
         CurrentTime = event.time(EventoAtual)
+        avaliado = pop.ident(população, event.ident(EventoAtual))
+        if avaliado != False:
         
-        
-        if event.kind(EventoAtual) == "avaliação": #se o proximo evento for avaliação
-            
-            avaliado = pop.ident(população, event.ident(EventoAtual)) #define o indivíduo a ser avaliado
-            A = ind.coef(avaliado) #calcula o coeficiente de adaptação do avaliado
-            I = CurrentTime - ind.idade(avaliado) #calcula a idade do avaliado
-
-            if random.random() < (1-(2/pi)*atan((1+A)**(1+8/(1+I)))): #probabilidade do avaliado morrer
-                população = pop.kill(população, avaliado) #retira o avaliado da população
-                CAP = cap.delete_id(CAP, avaliado) #elimia todos os eventos respeitantes ao avaliado
-
-            else: #se não morrer, marca-se a próxima avaliação
-                avaliação = event.event("avaliação", avaliado, CurrentTime + exprandom(Tlimiar))
-                CAP = cap.add(avaliação, CAP)
-
+            if event.kind(EventoAtual) == "avaliação": #se o proximo evento for avaliação
                 
-        elif event.kind(EventoAtual) == "evolução": #se o próximo evento for uma evolução
-        
-            avaliado = pop.ident(população, event.ident(EventoAtual)) #individuo a ser avaliado
-            T = pop.dim(população) #calcula a dimensão da população atual
+                avaliado = pop.ident(população, event.ident(EventoAtual)) #define o indivíduo a ser avaliado
+                A = ind.coef(avaliado) #calcula o coeficiente de adaptação do avaliado
+                I = CurrentTime - ind.idade(avaliado) #calcula a idade do avaliado
 
-            if random.random() < 1/(1+e**((K-T)/10)): #probabilidade de haver uma mutação
-                novo = ind.mutation(avaliado) #cria um indivíduo novo, que é a mutação do indivíduo avaliado
-                if ind.coef(novo) > ind.coef(avaliado): #substitui o avaliado pelo novo, se o novo for melhor
-                    população = pop.kill(população, avaliado) #elimina o avaliado
-                    população = pop.addI(população, novo) #adiciona o novo
-                    #não é preciso atualizar eventos, porque o novo tem o mesmo identificador (na prática, é o mesmo indivíduo)
+                if random.random() < (1-(2/pi)*atan((1+A)**(1+8/(1+I)))): #probabilidade do avaliado morrer
+                    CAP = cap.delete_id(CAP, avaliado) #elimia todos os eventos respeitantes ao avaliado
+                    população = pop.kill(população, avaliado) #retira o avaliado da população
+                    
 
-            else: #se não houver uma mutação, há uma reprodução
-                filho = ind.new(ind.colour(avaliado), CurrentTime, identificador) #cria o filho, com a mesma coloração
-                filho = ind.mutation(filho) #provoca uma mutação no filho
-                população = pop.addI(população, filho) #adiciona o filho à população
-                avaliação = event.event("avaliação", identificador, CurrentTime + exprandom(Tlimiar)) #próxima avaliação do filho
-                CAP = cap.add(avaliação, CAP)
-                evolução = event.event("evolução", identificador, CurrentTime + exprandom(Tritmo)) #próxima evolução do filho
+                else: #se não morrer, marca-se a próxima avaliação
+                    avaliação = event.event("avaliação", avaliado, CurrentTime + exprandom(Tlimiar))
+                    CAP = cap.add(avaliação, CAP)
+
+                    
+            elif event.kind(EventoAtual) == "evolução": #se o próximo evento for uma evolução
+            
+                avaliado = pop.ident(população, event.ident(EventoAtual)) #individuo a ser avaliado
+                T = pop.dim(população) #calcula a dimensão da população atual
+
+                if random.random() < 1/(1+e**((K-T)/10)): #probabilidade de haver uma mutação
+                    novo = ind.mutation(avaliado) #cria um indivíduo novo, que é a mutação do indivíduo avaliado
+                    if ind.coef(novo) > ind.coef(avaliado): #substitui o avaliado pelo novo, se o novo for melhor
+                        população = pop.kill(população, avaliado) #elimina o avaliado
+                        população = pop.addI(população, novo) #adiciona o novo
+                        #não é preciso atualizar eventos, porque o novo tem o mesmo identificador (na prática, é o mesmo indivíduo)
+
+                else: #se não houver uma mutação, há uma reprodução
+                    filho = ind.new(ind.colour(avaliado), CurrentTime, identificador) #cria o filho, com a mesma coloração
+                    filho = ind.mutation(filho) #provoca uma mutação no filho
+                    população = pop.addI(população, filho) #adiciona o filho à população
+                    avaliação = event.event("avaliação", identificador, CurrentTime + exprandom(Tlimiar)) #próxima avaliação do filho
+                    CAP = cap.add(avaliação, CAP)
+                    evolução = event.event("evolução", identificador, CurrentTime + exprandom(Tritmo)) #próxima evolução do filho
+                    CAP = cap.add(evolução, CAP)
+                    identificador += 1
+
+                evolução = event.event("evolução", ind.ident(avaliado), CurrentTime + exprandom(Tritmo)) #próxima evolução do avaliado
                 CAP = cap.add(evolução, CAP)
-                identificador += 1
-
-            evolução = event.event("evolução", ind.ident(avaliado), CurrentTime + exprandom(Tritmo)) #próxima evolução do avaliado
-            CAP = cap.add(evolução, CAP)
-            
-            
-        else: #se o próximo evento for uma seleção
-            
-            while ind.coef(pop.worst(população)) < 1: #elimina os indivíduos inválidos (com coeficientes <1)
-                população = pop.kill(pop.worst(população)) #elimina o pior indivíduo
-                CAP = cap.delete_id(CAP, pop.worst(população)) #elimina os eventos do indivíduo eliminado
-               
-            while pop.dim(população) > K*(3/2): #elimina os piores válidos, de forma a controlar o tamanho da população
-                população = pop.kill(pop.worst(população)) #elimina o pior indivíduo
-                CAP = cap.delete_id(CAP, pop.worst(população)) #elimina os eventos do indivíduo eliminado
-
-            seleção = event.event("seleção", 0, CurrentTime + exprandom(Tfiltro)) #próximo evento de seleção
-            CAP = cap.add(seleção, CAP)
+                
+                
+            else: #se o próximo evento for uma seleção
+                
+                while ind.coef(pop.worst(população)) < 1: #elimina os indivíduos inválidos (com coeficientes <1)
+                    CAP = cap.delete_id(CAP, pop.worst(população)) #elimina os eventos do indivíduo eliminado
+                    população = pop.kill(pop.worst(população)) #elimina o pior indivíduo
+                    
+                
+                while pop.dim(população) > K*(3/2): #elimina os piores válidos, de forma a controlar o tamanho da população
+                    CAP = cap.delete_id(CAP, pop.worst(população)) #elimina os eventos do indivíduo eliminado
+                    população = pop.kill(pop.worst(população)) #elimina o pior indivíduo
+                    
+                seleção = event.event("seleção", 0, CurrentTime + exprandom(Tfiltro)) #próximo evento de seleção
+                CAP = cap.add(seleção, CAP)
     #fim do ciclo
 
 

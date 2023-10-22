@@ -24,6 +24,8 @@ def ident(p,i):
             k+=1
     if found: #só devolve um valor se o indivíduo existir
         return p[k]
+    else:
+        return False
 
 #best(p) - devolve o indivíduo de p com melhor coeficiente de adaptação
 def best(p):

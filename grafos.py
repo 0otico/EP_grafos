@@ -22,10 +22,7 @@ def deledge(g,x,y): #remove a aresta (x,y) do grafo g
     return g
 
 def dim(g): #devolve o número de vértices de g
-    if type(g) == list:
-        return len(g)
-    else:
-        return g
+    return len(g)
 
 def emptyQ(g): #verifica se o gráfico é vazio (não tem arestas)
     res=True

@@ -8,7 +8,7 @@ def new(): #cria uma agenda vazia
 
 def add(e,c): #adiciona o evento e à agenda c
     #parte do pressuposto que c está ordenada
-    return [n for n in c if event.time(n)<event.time(e)]+[e]+[n for n in c if event.time(n)>event.time(e)] 
+    return [n for n in c if event.time(n)<=event.time(e)]+[e]+[n for n in c if event.time(n)>event.time(e)] 
 
 def nextE(c): #devolve o próximo evento na agenda c
     return c[0]

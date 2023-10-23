@@ -4,7 +4,8 @@ import colorações as color
 import indivíduos as ind 
 import população as pop 
 import eventos as event 
-import CAP as cap 
+import CAP as cap
+import copy
 
 #para fazer contas de probabilidade
 import random as random #extensão com random, randrange
@@ -12,6 +13,7 @@ from math import pi
 from math import log 
 from math import e
 from math import atan
+from math import ceil
 
 def exprandom(m):
     x=random.random()
@@ -43,9 +45,11 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
     CAP = cap.new() #cria a lista de eventos
 
     #inicializar a população e a CAP
-    cores = [x+1 for x in range(graph.dim(G))] #coloração da população inicial
-    coloracao = color.new(G, cores)
+     #coloração da população inicial
+    
     for k in range(K):
+        cores = [x+1 for x in range(graph.dim(G))]
+        coloracao = color.new(G, cores)
         indivíduo = ind.new(coloracao, CurrentTime, identificador) #cria o indivíduo novo 
         população = pop.addI(população, indivíduo) #junta o indivíduo novo à população
         avaliação = event.event("avaliação", identificador, CurrentTime + exprandom(Tlimiar)) #próxima avaliação do novo indivíduo
@@ -55,11 +59,11 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
         identificador += 1
         
     #próximo evento de seleção global
-    seleção = event.event("seleção", 0, CurrentTime+exprandom(Tfiltro)) #0 serve como default, porque a seleção afeta todos
+    seleção = event.event("seleção", True, CurrentTime+exprandom(Tfiltro)) #0 serve como default, porque a seleção afeta todos
     CAP = cap.add(seleção, CAP)
     
     
-    while CurrentTime <= Tfim and pop.dim(população)!=0: 
+    while (CurrentTime <= Tfim) and (pop.dim(população)!=0): 
         #simulação para quando não houver mais indivíduos ou chegar ao fim do tempo
         
         #inicializar o próximo evento
@@ -76,7 +80,6 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
                 I = CurrentTime - ind.idade(avaliado) #calcula a idade do avaliado
 
                 if random.random() < (1-(2/pi)*atan((1+A)**(1+8/(1+I)))): #probabilidade do avaliado morrer
-                    CAP = cap.delete_id(CAP, avaliado) #elimia todos os eventos respeitantes ao avaliado
                     população = pop.kill(população, avaliado) #retira o avaliado da população
                     
 
@@ -91,14 +94,16 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
                 T = pop.dim(população) #calcula a dimensão da população atual
 
                 if random.random() < 1/(1+e**((K-T)/10)): #probabilidade de haver uma mutação
-                    novo = ind.mutation(avaliado) #cria um indivíduo novo, que é a mutação do indivíduo avaliado
+                    novo = copy.deepcopy(avaliado)
+                    novo = ind.mutation(novo) #cria um indivíduo novo, que é a mutação do indivíduo avaliado
                     if ind.coef(novo) > ind.coef(avaliado): #substitui o avaliado pelo novo, se o novo for melhor
                         população = pop.kill(população, avaliado) #elimina o avaliado
                         população = pop.addI(população, novo) #adiciona o novo
                         #não é preciso atualizar eventos, porque o novo tem o mesmo identificador (na prática, é o mesmo indivíduo)
 
                 else: #se não houver uma mutação, há uma reprodução
-                    filho = ind.new(ind.colour(avaliado), CurrentTime, identificador) #cria o filho, com a mesma coloração
+                    novo = copy.deepcopy(avaliado)
+                    filho = ind.new(ind.colour(novo), CurrentTime, identificador) #cria o filho, com a mesma coloração
                     filho = ind.mutation(filho) #provoca uma mutação no filho
                     população = pop.addI(população, filho) #adiciona o filho à população
                     avaliação = event.event("avaliação", identificador, CurrentTime + exprandom(Tlimiar)) #próxima avaliação do filho
@@ -112,17 +117,19 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
                 
                 
             else: #se o próximo evento for uma seleção
+                print(ind.coef(pop.worst(população)))
+                while ind.coef(pop.worst(população)) < 1 and (pop.dim(população)!=0): #elimina os indivíduos inválidos (com coeficientes <1)
+                    print(população)
+                    população = pop.kill(pop.worst(população),população) #elimina o pior indivíduo
                 
-                while ind.coef(pop.worst(população)) < 1: #elimina os indivíduos inválidos (com coeficientes <1)
-                    CAP = cap.delete_id(CAP, pop.worst(população)) #elimina os eventos do indivíduo eliminado
-                    população = pop.kill(pop.worst(população)) #elimina o pior indivíduo
                     
                 
-                while pop.dim(população) > K*(3/2): #elimina os piores válidos, de forma a controlar o tamanho da população
-                    CAP = cap.delete_id(CAP, pop.worst(população)) #elimina os eventos do indivíduo eliminado
-                    população = pop.kill(pop.worst(população)) #elimina o pior indivíduo
+                while pop.dim(população) > K*(3/2) and (pop.dim(população)!=0): #elimina os piores válidos, de forma a controlar o tamanho da população
+                    print(pop.dim(população))
+                    população = pop.kill(pop.worst(população), população) #elimina o pior indivíduo
                     
-                seleção = event.event("seleção", 0, CurrentTime + exprandom(Tfiltro)) #próximo evento de seleção
+                    
+                seleção = event.event("seleção", True, CurrentTime + exprandom(Tfiltro)) #próximo evento de seleção
                 CAP = cap.add(seleção, CAP)
     #fim do ciclo
 
@@ -133,4 +140,6 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
     else:
         vencedor = pop.best(população) #vê qual o melhor sobrevivente
         coloração = ind.colour(vencedor) #vê a coloração do melhor
+        print(pop.dim(população))
+        print(população)
         return color.show(coloração) #mostra a  melhor coloração

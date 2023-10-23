@@ -45,6 +45,7 @@ def worst(p):
         if ind.coef(x)<worst:
             worst=ind.coef(x)
             res=x
+    print(res)
     return res
 
 #addI(p,i) - adiciona o indivíduo i à população p e devolve p
@@ -55,7 +56,11 @@ def addI(p,i):
 #kill(p,i) - tira o indivíduo i da lista p e devolve-a 
 def kill(p,i):
     res=[]
-    for x in p:
-        if ind.ident(x)!=ind.ident(i):
-            res+=[x]
+    n = 0
+    print(p[n])
+    print(p)
+    while n < dim(p):
+        if ind.ident(p[n])!=ind.ident(i):
+            res+=[p[n]]
+        n += 1
     return res

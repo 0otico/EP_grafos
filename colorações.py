@@ -11,8 +11,9 @@ def grafo(c): #devolve o grafo associado à coloração c
     return c[0]
 
 def cor(c,v,n): #altera a cor do vértice v para n na coloração c:
-    c[1][v-1]=n
-    return c
+    d = c[:]
+    d[1][v-1]=n
+    return d
 
 def show(c): #devolve os pares (vértice,cor) da coloração c
     for i in range(len(c[1])):
@@ -21,9 +22,9 @@ def show(c): #devolve os pares (vértice,cor) da coloração c
 def num_erros(c): #devolve o número de erros da coloração c
     erros=0
     i=0
-    while i<graph.dim(c):
+    while i<graph.dim(c[0]):
         j=0
-        while j<graph.dim(c):
+        while j<graph.dim(c[0]):
             if graph.edge(c[0],i+1,j+1): #os pares (i+1,j+1) cobrem todos os pares de vértices de g
                 if c[1][i]==c[1][j]: #verifica se as cores de i+1 e de j+1 são iguais
                     erros+=1 #se forem iguais, há um erro

@@ -45,8 +45,6 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
     CAP = cap.new() #cria a lista de eventos
 
     #inicializar a população e a CAP
-     #coloração da população inicial
-    
     for k in range(K):
         cores = [x+1 for x in range(graph.dim(G))]
         coloracao = color.new(G, cores)
@@ -59,7 +57,7 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
         identificador += 1
         
     #próximo evento de seleção global
-    seleção = event.event("seleção", True, CurrentTime+exprandom(Tfiltro)) #0 serve como default, porque a seleção afeta todos
+    seleção = event.event("seleção", 0, CurrentTime+exprandom(Tfiltro)) #0 serve como default, porque a seleção afeta todos
     CAP = cap.add(seleção, CAP)
     
     
@@ -70,8 +68,8 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
         EventoAtual = cap.nextE(CAP) #evento atual é o próximo da CAP
         CAP = cap.delete(CAP) #elimina o evento atual da CAP
         CurrentTime = event.time(EventoAtual)
-        avaliado = pop.ident(população, event.ident(EventoAtual))
-        if avaliado != False:
+        check = pop.ident(população, event.ident(EventoAtual))
+        if check != False: #se o evento atual for de um indivíduo que não existe, pop.ident devolve False
         
             if event.kind(EventoAtual) == "avaliação": #se o proximo evento for avaliação
                 
@@ -81,15 +79,14 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
 
                 if random.random() < (1-(2/pi)*atan((1+A)**(1+8/(1+I)))): #probabilidade do avaliado morrer
                     população = pop.kill(população, avaliado) #retira o avaliado da população
-                    
 
                 else: #se não morrer, marca-se a próxima avaliação
-                    avaliação = event.event("avaliação", avaliado, CurrentTime + exprandom(Tlimiar))
+                    avaliação = event.event("avaliação", ind.ident(avaliado), CurrentTime + exprandom(Tlimiar))
                     CAP = cap.add(avaliação, CAP)
 
                     
             elif event.kind(EventoAtual) == "evolução": #se o próximo evento for uma evolução
-            
+                
                 avaliado = pop.ident(população, event.ident(EventoAtual)) #individuo a ser avaliado
                 T = pop.dim(população) #calcula a dimensão da população atual
 
@@ -117,19 +114,14 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
                 
                 
             else: #se o próximo evento for uma seleção
-                print(ind.coef(pop.worst(população)))
+
                 while ind.coef(pop.worst(população)) < 1 and (pop.dim(população)!=0): #elimina os indivíduos inválidos (com coeficientes <1)
-                    print(população)
-                    população = pop.kill(pop.worst(população),população) #elimina o pior indivíduo
-                
-                    
+                    população = pop.kill(população,pop.worst(população)) #elimina o pior indivíduo
                 
                 while pop.dim(população) > K*(3/2) and (pop.dim(população)!=0): #elimina os piores válidos, de forma a controlar o tamanho da população
-                    print(pop.dim(população))
-                    população = pop.kill(pop.worst(população), população) #elimina o pior indivíduo
+                    população = pop.kill(população,pop.worst(população))  #elimina o pior indivíduo  
                     
-                    
-                seleção = event.event("seleção", True, CurrentTime + exprandom(Tfiltro)) #próximo evento de seleção
+                seleção = event.event("seleção", 0, CurrentTime + exprandom(Tfiltro)) #próximo evento de seleção
                 CAP = cap.add(seleção, CAP)
     #fim do ciclo
 
@@ -140,6 +132,4 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
     else:
         vencedor = pop.best(população) #vê qual o melhor sobrevivente
         coloração = ind.colour(vencedor) #vê a coloração do melhor
-        print(pop.dim(população))
-        print(população)
         return color.show(coloração) #mostra a  melhor coloração

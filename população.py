@@ -17,15 +17,17 @@ def dim(p):
 def ident(p,i):
     k=0
     found=False
+    if i == 0: # i==0 para eventos globais, sem identificador específico
+        return True
     while k<len(p) and not found:
         if ind.ident(p[k])==i:
             found=True
         else:
             k+=1
-    if found: #só devolve um valor se o indivíduo existir
+    if found: #devolve o indivíduo, se existir
         return p[k]
-    else:
-        return False
+    else: #devolve False se não existir indivíduo
+        return False 
 
 #best(p) - devolve o indivíduo de p com melhor coeficiente de adaptação
 def best(p):
@@ -45,7 +47,6 @@ def worst(p):
         if ind.coef(x)<worst:
             worst=ind.coef(x)
             res=x
-    print(res)
     return res
 
 #addI(p,i) - adiciona o indivíduo i à população p e devolve p
@@ -57,8 +58,6 @@ def addI(p,i):
 def kill(p,i):
     res=[]
     n = 0
-    print(p[n])
-    print(p)
     while n < dim(p):
         if ind.ident(p[n])!=ind.ident(i):
             res+=[p[n]]

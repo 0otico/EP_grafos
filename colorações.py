@@ -17,7 +17,7 @@ def cor(c,v,n): #altera a cor do vértice v para n na coloração c:
 
 def show(c): #devolve os pares (vértice,cor) da coloração c
     for i in range(len(c[1])):
-        print ((i+1,c[1][i]))
+        print ("Vértice", i+1, ":", "cor nº", c[1][i])
 
 def num_erros(c): #devolve o número de erros da coloração c
     erros=0
@@ -53,3 +53,6 @@ def num_cores(c): #devolve o número de cores distintas usadas em c
                 i-=1
             i+=1
     return res
+
+def copyC(c):
+    return new(c[0],c[1][:])

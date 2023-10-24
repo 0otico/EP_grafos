@@ -41,6 +41,8 @@ def best(p):
 
 #worst(p) - devolve o indivíduo de p com pior coeficiente de adaptação 
 def worst(p):
+    if dim(p) == 0:
+        return ind.emptyI()
     worst=ind.coef(p[0])
     res=p[0]
     for x in p[1:]:

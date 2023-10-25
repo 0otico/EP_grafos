@@ -65,8 +65,8 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
         EventoAtual = cap.nextE(CAP) #evento atual é o próximo da CAP
         CAP = cap.delete(CAP) #elimina o evento atual da CAP
         CurrentTime = event.time(EventoAtual)
-        check = pop.ident(população, event.ident(EventoAtual)) #para verificar se o evento é de um indivíduo que existe
-        if check != False: #se o evento atual for de um indivíduo que não existe, pop.ident devolve False
+        check = pop.identQ(população, event.ident(EventoAtual)) #para verificar se o evento é de um indivíduo que existe
+        if check: #se o evento atual for de um indivíduo que não existe, pop.ident devolve False
         
             if event.kind(EventoAtual) == "avaliação": #se o proximo evento for avaliação
                 

@@ -26,15 +26,14 @@ def identQ(p,i):
     
 #ident(p,i) - devolve o indivíduo da população p com o identificador i
 def ident(p,i):
-    if identQ(p,i):
-    k=0
-    found=False
-    while k<len(p) and not found:
-        if ind.ident(p[k])==i:
-            found=True
-        else:
-            k+=1
-    if found: #devolve o indivíduo, se existir
+    if identQ(p,i): #só vai procurar se o indivíduo exisitr
+        k=0
+        found=False
+        while k<len(p) and not found:
+            if ind.ident(p[k])==i:
+                found=True
+            else:
+                k+=1
         return p[k]
     
 

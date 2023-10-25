@@ -16,6 +16,8 @@ def dim(p):
 
 #identQ(p,i) - verifica se algum indivíduo de p tem o identificador i
 def identQ(p,i):
+    if i==0: #0 é o "identificador universal": representa todos os indivíduos
+        return dim(p)!=0 #desde que existam indivíduos, existem indivíduos "identificados" por 0
     k=0
     found=False
     while k<len(p) and not found:
@@ -26,7 +28,9 @@ def identQ(p,i):
     
 #ident(p,i) - devolve o indivíduo da população p com o identificador i
 def ident(p,i):
-    if identQ(p,i): #só vai procurar se o indivíduo exisitr
+    if identQ(p,i) and i!=0: 
+        #só vai procurar se o indivíduo existir
+        #ao contrário de identQ, neste caso tem de ser um indivíduo particular; i não pode ser 0
         k=0
         found=False
         while k<len(p) and not found:

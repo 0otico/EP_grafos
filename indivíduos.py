@@ -9,25 +9,18 @@ import copy
 def new(c,t,n):
     return[c,t,n]
 
-def emptyI():
-    return []
-
-def emptyQ(i):
-    return i == emptyI()
-    
-
 #coef(i) - devolve o coeficiente de adaptação de i
 def coef(i):
-    if emptyQ(i):
-        return 0 
     if color.num_erros(i[0])==0:
         return graph.dim(color.grafo(i[0]))/color.num_cores(i[0])
     else:
         return 1/(color.num_erros(i[0])+1)
 
+
 #idade(i) - devolve o momento de criação de i
 def idade(i):
     return i[1]
+
 
 #mutation(i) - altera uma cor na coloração de i (devolve o indivíduo evoluído)
 def mutation(i):

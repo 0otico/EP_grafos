@@ -20,7 +20,7 @@ def identQ(p,i):
     found=False
     while k<len(p) and not found:
         found = ind.ident(p[k])==i
-        i+=1
+        k+=1
     return found
 
     

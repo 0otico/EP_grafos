@@ -1,20 +1,20 @@
-#População - Lista p de indivíduos
+#Uma população eé uma lista p de indivíduos
 
 import grafos as graph
 import colorações as color
 import indivíduos as ind
 import random as random
 
-#new() - cria uma população nova (devolve a população criada)
+#new() - cria uma população nova
 def new():
     return []
 
-#dim(p) - devolve a dimensão da população (número de elementos)
+#dim(p) - devolve o número de elementos da população
 def dim(p):
     return len(p)
 
 
-#identQ(p,i) - devolve True se o indivíduo com identificador i existir na população p
+#identQ(p,i) - verifica se algum indivíduo de p tem o identificador i
 def identQ(p,i):
     k=0
     found=False
@@ -62,7 +62,7 @@ def addI(p,i):
     p+=[i]
     return p
 
-#kill(p,i) - tira o indivíduo i da lista p e devolve-a 
+#kill(p,i) - tira o indivíduo com identificador i da lista p
 def kill(p,i):
     res=[]
     n = 0

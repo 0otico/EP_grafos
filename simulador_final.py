@@ -110,12 +110,14 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
                 
                 
             else: #se o próximo evento for uma seleção
-                if pop.dim(população)!=0: 
-                    while ind.coef(pop.worst(população)) < 1 and (pop.dim(população)!=0): #elimina os indivíduos inválidos (com coeficientes <1)
-                        população = pop.kill(população,pop.worst(população)) #elimina o pior indivíduo
-                
-                    while pop.dim(população) > K*(3/2) and (pop.dim(população)!=0): #elimina os piores válidos, para controlar o tamanho da população
-                        população = pop.kill(população,pop.worst(população))  #elimina o pior indivíduo  
+                check=True
+                while pop.dim(população)!=0 and check:
+                    if ind.coef(pop.worst(população)) < 1 or pop.dim(população) > K*3/2: 
+                        #elimina indivíduos enquanto houver indivíduos não válidos (com coeficientes <1)
+                        #elimina indivíduos enquanto a população for muito grande
+                        população=pop.kill(população,pop.worst(população)) #elimina o pior indivíduo
+                    else:
+                         check=False #se estiver tudo OK, para o ciclo
                     
                     seleção = event.event("seleção", 0, CurrentTime + Tfiltro) #próximo evento de seleção
                     CAP = cap.add(seleção, CAP)

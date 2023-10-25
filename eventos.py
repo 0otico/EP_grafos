@@ -9,7 +9,7 @@ def event(k,i,t): #cria um evento do tipo k, a acontecer ao indivíduo i no inst
 def kind(e): #devolve o tipo do evento e
     return e[0]
 
-def ident(e): #devolve o indivíduo a quem vai acontecer o evento e
+def ident(e): #devolve o identificador do indivíduo a quem vai acontecer o evento e
     return e[1]
 
 def time(e): #devolve o instante em que vai acontecer o evento e

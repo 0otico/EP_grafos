@@ -1,7 +1,8 @@
-#Um grafo é uma lista de listas g, em que g[i] corresponde ao vértice i+1; os elementos de g[i] são os vértices ligados a i+1.
-# - Cada vértice é um número natural
-# - O número de vértices corresponde a len(g)
-# - Cada aresta (x,y) aparece representada 2 vezes: y aparece na lista de x, e x aparece na lista de y
+#Um grafo é uma lista de listas g, em que g[i] corresponde ao vértice i+1; 
+#Os elementos de g[i] são os vértices ligados a i+1.
+#Cada vértice é um número natural
+#O número de vértices corresponde a len(g)
+#Cada aresta (x,y) aparece representada 2 vezes: y aparece na lista de x, e x aparece na lista de y
 
 def new(n): #cria um grafo com n vértices, e sem arestas
     return [[] for x in range(n)]
@@ -10,7 +11,7 @@ def addedge(g,x,y): #adiciona a aresta (x,y) ao grafo g
     if not y in g[x-1] and x!=y: 
         #só adiciona a aresta se ela não existir
         #o grafo não pode ter arestas para si mesmo, senão nenhuma coloração é válida
-        #em princípio, se y pertence a g[x-1] então x pertence a g[y-1]
+        #se y pertence a g[x-1] então x pertence a g[y-1]
         g[x-1]=[n for n in g[x-1] if n<y]+[y]+[n for n in g[x-1] if n>y]
         g[y-1]=[n for n in g[y-1] if n<x]+[x]+[n for n in g[y-1] if n>x]
     return g
@@ -33,7 +34,7 @@ def emptyQ(g): #verifica se o gráfico é vazio (não tem arestas)
     return res
 
 def edge(g,x,y): #verifica se a aresta (x,y) existe em g
-    if y in g[x-1] and x in g[y-1] and x!=y: #é redundante, mas better safe than sorry 
+    if y in g[x-1] and x in g[y-1] and x!=y: #é redudante de propósito, para garantir que corre tudo bem
         return True
     else:
         return False

@@ -15,10 +15,3 @@ def nextE(c): #devolve o próximo evento na agenda c
 
 def delete(c): #elimina o primeiro evento da agenda c
     return c[1:]
-
-def delete_id(c,i): #elimina os eventos respeitantes ao indivíduo i da agenda c
-    res=[]
-    for x in c:
-        if not event.ident(x)==i: 
-            res+=[x] #adiciona ao resultado os eventos que não dizem respeito ao indivíduo i
-    return res

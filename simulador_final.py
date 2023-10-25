@@ -6,13 +6,12 @@ import população as pop
 import eventos as event 
 import CAP as cap
 
-#para fazer contas de probabilidade
-import random as random #extensão com random, randrange
+#para fazer cálculos
+import random as random
 from math import pi 
 from math import log 
 from math import e
 from math import atan
-from math import ceil
 
 def exprandom(m):
     x=random.random()
@@ -38,7 +37,6 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
         return 'Erro: a variável Tfiltro tem de ser um número positivo'
 
     #inicalizar as variáveis
-    ciclo = 0
     CurrentTime = 0 #o instante em que estamos
     identificador = 1 #identificador do próximo indivíduo a ser criado
     população = pop.new() #cria a lista de individuos
@@ -46,8 +44,8 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
 
     #inicializar a população e a CAP
     for k in range(K):
-        cores = [x+1 for x in range(graph.dim(G))]
-        coloracao = color.new(G, cores)
+        cores = [x+1 for x in range(graph.dim(G))] #cria a lista das cores iniciais
+        coloracao = color.new(G, cores) #cria a coloração inicial
         indivíduo = ind.new(coloracao, CurrentTime, identificador) #cria o indivíduo novo 
         população = pop.addI(população, indivíduo) #junta o indivíduo novo à população
         avaliação = event.event("avaliação", identificador, CurrentTime + exprandom(Tlimiar)) #próxima avaliação do novo indivíduo
@@ -57,9 +55,8 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
         identificador += 1
         
     #próximo evento de seleção global
-    seleção = event.event("seleção", 0, CurrentTime+exprandom(Tfiltro)) #0 serve como default, porque a seleção afeta todos
+    seleção = event.event("seleção", 0, CurrentTime+Tfiltro) #0 serve como default, porque a seleção afeta todos
     CAP = cap.add(seleção, CAP)
-    
     
     while (CurrentTime <= Tfim) and (pop.dim(população)!=0): 
         #simulação para quando não houver mais indivíduos ou chegar ao fim do tempo
@@ -68,7 +65,7 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
         EventoAtual = cap.nextE(CAP) #evento atual é o próximo da CAP
         CAP = cap.delete(CAP) #elimina o evento atual da CAP
         CurrentTime = event.time(EventoAtual)
-        check = pop.ident(população, event.ident(EventoAtual))
+        check = pop.ident(população, event.ident(EventoAtual)) #para verificar se o evento é de um indivíduo que existe
         if check != False: #se o evento atual for de um indivíduo que não existe, pop.ident devolve False
         
             if event.kind(EventoAtual) == "avaliação": #se o proximo evento for avaliação
@@ -84,23 +81,22 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
                     avaliação = event.event("avaliação", ind.ident(avaliado), CurrentTime + exprandom(Tlimiar))
                     CAP = cap.add(avaliação, CAP)
 
-                    
             elif event.kind(EventoAtual) == "evolução": #se o próximo evento for uma evolução
                 
                 avaliado = pop.ident(população, event.ident(EventoAtual)) #individuo a ser avaliado
                 T = pop.dim(população) #calcula a dimensão da população atual
 
                 if random.random() < 1/(1+e**((K-T)/10)): #probabilidade de haver uma mutação
-                    novo = ind.copyI(avaliado)
-                    novo = ind.mutation(novo) #cria um indivíduo novo, que é a mutação do indivíduo avaliado
+                    novo = ind.copyI(avaliado) #cria uma cópia do avaliado
+                    novo = ind.mutation(novo) #faz a mutação do indivíduo novo
                     if ind.coef(novo) > ind.coef(avaliado): #substitui o avaliado pelo novo, se o novo for melhor
                         população = pop.kill(população, avaliado) #elimina o avaliado
                         população = pop.addI(população, novo) #adiciona o novo
                         #não é preciso atualizar eventos, porque o novo tem o mesmo identificador (na prática, é o mesmo indivíduo)
 
                 else: #se não houver uma mutação, há uma reprodução
-                    novo = ind.copyI(avaliado)
-                    filho = ind.new(ind.colour(novo), CurrentTime, identificador) #cria o filho, com a mesma coloração
+                    novo = ind.copyI(avaliado) #faz uma cópia do indivíduo avaliado
+                    filho = ind.new(ind.colour(novo), CurrentTime, identificador) #cria o filho, com base na cópia do avaliado
                     filho = ind.mutation(filho) #provoca uma mutação no filho
                     população = pop.addI(população, filho) #adiciona o filho à população
                     avaliação = event.event("avaliação", identificador, CurrentTime + exprandom(Tlimiar)) #próxima avaliação do filho
@@ -114,22 +110,16 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
                 
                 
             else: #se o próximo evento for uma seleção
-                if pop.dim(população)!=0:
+                if pop.dim(população)!=0: 
                     while ind.coef(pop.worst(população)) < 1 and (pop.dim(população)!=0): #elimina os indivíduos inválidos (com coeficientes <1)
                         população = pop.kill(população,pop.worst(população)) #elimina o pior indivíduo
                 
-                    while pop.dim(população) > K*(3/2) and (pop.dim(população)!=0): #elimina os piores válidos, de forma a controlar o tamanho da população
+                    while pop.dim(população) > K*(3/2) and (pop.dim(população)!=0): #elimina os piores válidos, para controlar o tamanho da população
                         população = pop.kill(população,pop.worst(população))  #elimina o pior indivíduo  
                     
-                    seleção = event.event("seleção", 0, CurrentTime + exprandom(Tfiltro)) #próximo evento de seleção
+                    seleção = event.event("seleção", 0, CurrentTime + Tfiltro) #próximo evento de seleção
                     CAP = cap.add(seleção, CAP)
-            if CurrentTime > ciclo:
-                print("Ano atual: ", CurrentTime)
-                print("Populção atual: ", pop.dim(população))
-                print("Melhor indivíduo: ", pop.best(população))
-                ciclo += Tfim//10
     #fim do ciclo
-
 
     if pop.dim(população)==0: #se o ciclo parou porque não havia mais indivíduos
         return 'A simulação parou porque foram eliminados todos os indivíduos'
@@ -137,4 +127,6 @@ def simulador(G, K, Tfim, Tritmo, Tlimiar, Tfiltro):
     else:
         vencedor = pop.best(população) #vê qual o melhor sobrevivente
         coloração = ind.colour(vencedor) #vê a coloração do melhor
-        return color.show(coloração) #mostra a  melhor coloração
+        color.show(coloração) #mostra a  melhor coloração
+        return color.num_cores(coloração) #devolve o número de cores da melhor coloração
+#fim do simulador

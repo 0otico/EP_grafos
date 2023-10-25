@@ -4,14 +4,14 @@
 
 import grafos as graph
 
-def new(g,w): #cria uma coloração de g, segundo as cores dadas por w
+def new(g,w): #cria uma coloração de g, segundo as cores dadas pela lista w
     return [g,w]
 
 def grafo(c): #devolve o grafo associado à coloração c
     return c[0]
 
-def cor(c,v,n): #altera a cor do vértice v para n na coloração c:
-    d = c[:]
+def cor(c,v,n): #altera a cor do vértice v para n na coloração c
+    d = c[:] #faz uma cópia de c
     d[1][v-1]=n
     return d
 
@@ -30,22 +30,22 @@ def num_erros(c): #devolve o número de erros da coloração c
                     erros+=1 #se forem iguais, há um erro
             j+=1
         i+=1
-    return erros//2 #divide por 2 porque cada aresta é verificada 2 vezes
+    return erros//2 #cada aresta é verificada 2 vezes
 
 def num_cores(c): #devolve o número de cores distintas usadas em c
  
-    def minimo(w): #função que calcula o minimo de uma lista; no big deal
+    def minimo(w): #função que calcula o minimo de uma lista
         res=w[0]
         for x in w:
             if x<res:
                 res=x
         return res
     
-    check=c[1][:] #copiar a lista, não destruir uma lista que temos de manter
+    check=c[1][:] #copia a lista
     res=0 
     while len(check)!=0: #aproveita o facto de as cores serem representadas por números
         min_aux=minimo(check) 
-        res+=1
+        res+=1 #conta o número de mínimos (ou cores) que se retira da lista
         i=0
         while i<len(check): #elimina todas as ocorrências do mínimo de check na própria lista check
             if check[i]==min_aux: 
@@ -54,5 +54,5 @@ def num_cores(c): #devolve o número de cores distintas usadas em c
             i+=1
     return res
 
-def copyC(c):
+def copyC(c): #cria uma cópia da coloração c
     return new(c[0],c[1][:])

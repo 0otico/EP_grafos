@@ -80,7 +80,7 @@ def graphQ(e): #verifica se é um grafo
                     if not intruso:
                         i=0
                         notfound=True
-                        while notfound and i<len(e[1]): #verifica se todas as listas têm duas posições (são arestas)
+                        while notfound and i<len(e[1]): #verifica se todos os tuplos têm duas posições (são arestas)
                             notfound= len(e[1][i])==2
                             i+=1
                         if notfound:

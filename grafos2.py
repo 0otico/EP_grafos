@@ -1,9 +1,9 @@
 # Grafo corresponde a uma lista em que a posição 0 diz-nos quantos vértices o grafo tem
-# e a posição 1 é uma lista que possui todas os pares de arestas
+# e a posição 1 é uma lista que possui todas os pares de arestas (tuplos)
 #Tem-se que cada par de arestas (x,y) aparece também (y,x); os vértices são números inteiros; 
 #não podem existir arestas para o próprio vértice, pois assim nenhuma coloração seria válida
 
-def newgraph(N): #grafo com n vértices e nehuma aresta
+def new(N): #grafo com n vértices e nehuma aresta
     return [N,[]] #devolve o grafo criado
 
 
@@ -55,22 +55,13 @@ def emptyQ(e):   #vê se o grafo é vazio
     return len(e[1])==0 #retorna verdadeiro ou falso consuante a avaliação
 
 
-def edge(g,x,y): #vê se a aresta está no grafo
-    i=0
-    f=0
-    Found=False
-    Found2= False
-    if x!=y:   #não pode ter arestas para o próprio vértice
-        while not Found and i<len(g[1]):  #encontrar a aresta
-            Found= (g[1][i]==(x,y))
-            i=i+1
-        while ((not Found2)) and f<len(g[1]): #encontrar a aresta para o sentido oposto
-            Found2 = g[1][f]==(y,x)   
-            f=f+1
-        if Found and Found2: #apresenta o resultado
-            return True
-        else:
-            return False
+def edge(g, x, y):  #vê se a aresta se encontra no grafo
+    if x != y:  #vê se não à aresta para o próprio vértice
+        existearesta=False
+        for edge in g[1]:
+            if (x, y) == edge or (y, x) == edge:
+                existearesta = True
+        return existearesta
     else:
         return False
 
@@ -83,8 +74,8 @@ def graphQ(e): #verifica se é um grafo
                         return True
                     j=0
                     intruso=False    
-                    while j<len(e[1]) and not intruso: #verificar que é uma lista de listas
-                        intruso= type(e[1][j])!=list
+                    while j<len(e[1]) and not intruso: #verificar que é uma lista de tuplos
+                        intruso= type(e[1][j])!=tuple
                         j=j+1
                     if not intruso:
                         i=0

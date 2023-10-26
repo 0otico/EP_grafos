@@ -1,4 +1,4 @@
-#Uma população eé uma lista p de indivíduos
+#Uma população é uma lista p de indivíduos
 
 import grafos as graph
 import colorações as color

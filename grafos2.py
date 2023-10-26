@@ -56,10 +56,10 @@ def emptyQ(e):   #vê se o grafo é vazio
 
 
 def edge(g, x, y):  #vê se a aresta se encontra no grafo
-    if x != y:  #vê se não à aresta para o próprio vértice
+    if x != y:  #vê se não há aresta para o próprio vértice
         existearesta=False
         for edge in g[1]:
-            if (x, y) == edge or (y, x) == edge:
+            if (x, y) == edge or (y, x) == edge: #a aresta está no grafo
                 existearesta = True
         return existearesta
     else:

@@ -47,12 +47,12 @@ def deledge(g,x,y): #apaga arestas do grafo
         return g
 
 
-def dim(g):      #dá o numo de vértices do grafo
+def dim(g):      #dá o número de vértices do grafo
     return g[0]
 
 
 def emptyQ(e):   #vê se o grafo é vazio 
-    return len(e[1])==0 #retorna verdadeiro ou falso consuante a avaliação
+    return len(e[1])==0 #retorna verdadeiro ou falso consoante a avaliação
 
 
 def edge(g, x, y):  #vê se a aresta se encontra no grafo
@@ -68,7 +68,7 @@ def edge(g, x, y):  #vê se a aresta se encontra no grafo
 def graphQ(e): #verifica se é um grafo
     if type(e)==list: #verifica se é uma lista
         if len(e)==2: #essa lista tem duas posições
-            if type(e[0])==int: #a primeira posição corresponde a um inteira
+            if type(e[0])==int: #a primeira posição corresponde a um inteiro
                 if type(e[1])==list: #a segunda é uma lista
                     if e[1]==[]:      # se essa lista For vazia é um grafo
                         return True
@@ -84,7 +84,7 @@ def graphQ(e): #verifica se é um grafo
                             notfound= len(e[1][i])==2
                             i+=1
                         if notfound:
-                            if len(list_nodes(e))<=e[0]: #confirma se a arestas não entre vértices que não existem no grafo
+                            if len(list_nodes(e))<=e[0]: #confirma se a arestas não estão entre vértices que não existem no grafo
                                 j=0
                                 while j<len(e[1]):  #verifica se cada par de arestas (x,y) tem um oposto (y,x) que lhe corresponde
                                     k=0
